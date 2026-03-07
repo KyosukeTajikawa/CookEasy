@@ -1,21 +1,23 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RecipeController;
 use Illuminate\Support\Facades\Route;
 
 // ゲスト（認証不要・固定パス）
-Route::get('/', fn () => view('welcome'))->name('home');
+Route::get('/', [RecipeController::class, 'index'])->name('home');
+Route::get('/recipes', [RecipeController::class, 'index'])->name('recipes.index');
 
 // ログインユーザー向けルート
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
 
-    // レシピ CRUD（05_recipe_crud で Controller に置き換え）
-    Route::get('/recipes/create', fn () => abort(501))->name('recipes.create');
-    Route::post('/recipes', fn () => abort(501))->name('recipes.store');
-    Route::get('/recipes/{recipe}/edit', fn () => abort(501))->name('recipes.edit');
-    Route::put('/recipes/{recipe}', fn () => abort(501))->name('recipes.update');
-    Route::delete('/recipes/{recipe}', fn () => abort(501))->name('recipes.destroy');
+    // レシピ CRUD
+    Route::get('/recipes/create', [RecipeController::class, 'create'])->name('recipes.create');
+    Route::post('/recipes', [RecipeController::class, 'store'])->name('recipes.store');
+    Route::get('/recipes/{recipe}/edit', [RecipeController::class, 'edit'])->name('recipes.edit');
+    Route::put('/recipes/{recipe}', [RecipeController::class, 'update'])->name('recipes.update');
+    Route::delete('/recipes/{recipe}', [RecipeController::class, 'destroy'])->name('recipes.destroy');
 
     // マイページ（14_mypage で Controller に置き換え）
     Route::get('/mypage/recipes', fn () => abort(501))->name('mypage.recipes');
@@ -63,7 +65,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 });
 
 // ゲスト（認証不要・ワイルドカード）※ 固定パスルートの後に定義
-Route::get('/recipes/{recipe}', fn () => abort(501))->name('recipes.show');
+Route::get('/recipes/{recipe}', [RecipeController::class, 'show'])->name('recipes.show');
 Route::get('/recipes/{recipe}/quiz', fn () => abort(501))->name('recipes.quiz.show');
 
 require __DIR__.'/auth.php';
