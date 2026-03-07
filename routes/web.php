@@ -5,7 +5,6 @@ use App\Http\Controllers\RecipeController;
 use Illuminate\Support\Facades\Route;
 
 // ゲスト（認証不要・固定パス）
-Route::get('/', [RecipeController::class, 'index'])->name('home');
 Route::get('/recipes', [RecipeController::class, 'index'])->name('recipes.index');
 
 // ログインユーザー向けルート
