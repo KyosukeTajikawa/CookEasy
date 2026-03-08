@@ -42,19 +42,13 @@ class RecipeController extends Controller
     public function store(StoreRecipeRequest $request): RedirectResponse
     {
         $recipe = Auth::user()->recipes()->create([
-            ...$request->safe()->except('images'),
+            ...$request->safe()->only(['title', 'description', 'cook_time', 'difficulty']),
             'status' => 'pending',
         ]);
 
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $index => $file) {
-                $recipe->recipeImages()->create([
-                    'image_path'   => $file->store('recipe_images', 'public'),
-                    'order'        => $index + 1,
-                    'is_thumbnail' => $index === 0,
-                ]);
-            }
-        }
+        $this->saveImages($request, $recipe);
+        $this->saveIngredients($request, $recipe);
+        $this->saveSteps($request, $recipe);
 
         return redirect()->route('recipes.index')
             ->with('success', 'レシピを投稿しました。管理者の承認後に公開されます。');
@@ -73,22 +67,27 @@ class RecipeController extends Controller
     {
         $this->authorize('update', $recipe);
 
-        $recipe->update($request->safe()->except('images'));
+        $recipe->update($request->safe()->only(['title', 'description', 'cook_time', 'difficulty']));
 
         if ($request->hasFile('images')) {
             foreach ($recipe->recipeImages as $image) {
                 Storage::disk('public')->delete($image->image_path);
                 $image->forceDelete();
             }
-
-            foreach ($request->file('images') as $index => $file) {
-                $recipe->recipeImages()->create([
-                    'image_path'   => $file->store('recipe_images', 'public'),
-                    'order'        => $index + 1,
-                    'is_thumbnail' => $index === 0,
-                ]);
-            }
+            $this->saveImages($request, $recipe);
         }
+
+        foreach ($recipe->ingredients as $ingredient) {
+            $ingredient->forceDelete();
+        }
+        foreach ($recipe->steps as $step) {
+            if ($step->image_path) {
+                Storage::disk('public')->delete($step->image_path);
+            }
+            $step->forceDelete();
+        }
+        $this->saveIngredients($request, $recipe);
+        $this->saveSteps($request, $recipe);
 
         return redirect()->route('recipes.show', $recipe)
             ->with('success', 'レシピを更新しました。');
@@ -101,10 +100,64 @@ class RecipeController extends Controller
         foreach ($recipe->recipeImages as $image) {
             Storage::disk('public')->delete($image->image_path);
         }
+        foreach ($recipe->steps as $step) {
+            if ($step->image_path) {
+                Storage::disk('public')->delete($step->image_path);
+            }
+        }
 
         $recipe->delete();
 
         return redirect()->route('recipes.index')
             ->with('success', 'レシピを削除しました。');
+    }
+
+    private function saveImages($request, Recipe $recipe): void
+    {
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $index => $file) {
+                $recipe->recipeImages()->create([
+                    'image_path'   => $file->store('recipe_images', 'public'),
+                    'order'        => $index + 1,
+                    'is_thumbnail' => $index === 0,
+                ]);
+            }
+        }
+    }
+
+    private function saveIngredients($request, Recipe $recipe): void
+    {
+        $order = 1;
+        foreach ($request->input('ingredients', []) as $ingredient) {
+            if (empty($ingredient['name'])) {
+                continue;
+            }
+            $recipe->ingredients()->create([
+                'name'     => $ingredient['name'],
+                'quantity' => $ingredient['quantity'] ?? '',
+                'unit'     => $ingredient['unit'] ?? '',
+                'order'    => $order++,
+            ]);
+        }
+    }
+
+    private function saveSteps($request, Recipe $recipe): void
+    {
+        $stepImages = $request->file('step_images', []);
+        $order = 1;
+        foreach ($request->input('steps', []) as $index => $step) {
+            if (empty($step['description'])) {
+                continue;
+            }
+            $imagePath = null;
+            if (!empty($stepImages[$index])) {
+                $imagePath = $stepImages[$index]->store('step_images', 'public');
+            }
+            $recipe->steps()->create([
+                'description' => $step['description'],
+                'image_path'  => $imagePath,
+                'order'       => $order++,
+            ]);
+        }
     }
 }

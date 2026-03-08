@@ -70,6 +70,47 @@
                         @enderror
                     </div>
 
+                    {{-- 食材 --}}
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">食材</label>
+                        <div id="ingredients-container" class="space-y-2">
+                            <div class="ingredient-row flex gap-2">
+                                <input type="text" name="ingredients[0][name]" placeholder="食材名"
+                                       class="flex-1 border-gray-300 rounded-md shadow-sm text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                <input type="text" name="ingredients[0][quantity]" placeholder="分量"
+                                       class="w-20 border-gray-300 rounded-md shadow-sm text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                <input type="text" name="ingredients[0][unit]" placeholder="単位"
+                                       class="w-20 border-gray-300 rounded-md shadow-sm text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                <button type="button" onclick="this.closest('.ingredient-row').remove()"
+                                        class="text-red-500 hover:text-red-700 text-sm px-1">✕</button>
+                            </div>
+                        </div>
+                        <button type="button" onclick="addIngredient()"
+                                class="mt-2 text-sm text-indigo-600 hover:underline">+ 食材を追加</button>
+                    </div>
+
+                    {{-- 手順 --}}
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">手順</label>
+                        <div id="steps-container" class="space-y-3">
+                            <div class="step-row border border-gray-200 rounded-md p-3">
+                                <div class="flex items-start gap-2">
+                                    <span class="flex-shrink-0 w-6 h-6 bg-indigo-100 text-indigo-700 rounded-full flex items-center justify-center text-xs font-bold mt-1 step-num">1</span>
+                                    <div class="flex-1">
+                                        <textarea name="steps[0][description]" rows="2" placeholder="手順の説明"
+                                                  class="w-full border-gray-300 rounded-md shadow-sm text-sm focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                                        <input type="file" name="step_images[0]" accept="image/jpeg,image/png,image/webp"
+                                               class="mt-1 w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:bg-gray-100 file:text-gray-600">
+                                    </div>
+                                    <button type="button" onclick="removeStep(this)"
+                                            class="text-red-500 hover:text-red-700 text-sm px-1">✕</button>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" onclick="addStep()"
+                                class="mt-2 text-sm text-indigo-600 hover:underline">+ 手順を追加</button>
+                    </div>
+
                     {{-- 画像 --}}
                     <div class="mb-6">
                         <label for="images" class="block text-sm font-medium text-gray-700 mb-1">
@@ -98,4 +139,55 @@
             </div>
         </div>
     </div>
+<script>
+let ingredientIndex = 1;
+let stepIndex = 1;
+
+function addIngredient() {
+    const i = ingredientIndex++;
+    const container = document.getElementById('ingredients-container');
+    const row = document.createElement('div');
+    row.className = 'ingredient-row flex gap-2';
+    row.innerHTML = `
+        <input type="text" name="ingredients[${i}][name]" placeholder="食材名"
+               class="flex-1 border-gray-300 rounded-md shadow-sm text-sm focus:ring-indigo-500 focus:border-indigo-500">
+        <input type="text" name="ingredients[${i}][quantity]" placeholder="分量"
+               class="w-20 border-gray-300 rounded-md shadow-sm text-sm focus:ring-indigo-500 focus:border-indigo-500">
+        <input type="text" name="ingredients[${i}][unit]" placeholder="単位"
+               class="w-20 border-gray-300 rounded-md shadow-sm text-sm focus:ring-indigo-500 focus:border-indigo-500">
+        <button type="button" onclick="this.closest('.ingredient-row').remove()"
+                class="text-red-500 hover:text-red-700 text-sm px-1">✕</button>
+    `;
+    container.appendChild(row);
+}
+
+function addStep() {
+    const i = stepIndex++;
+    const container = document.getElementById('steps-container');
+    const num = container.querySelectorAll('.step-row').length + 1;
+    const row = document.createElement('div');
+    row.className = 'step-row border border-gray-200 rounded-md p-3';
+    row.innerHTML = `
+        <div class="flex items-start gap-2">
+            <span class="flex-shrink-0 w-6 h-6 bg-indigo-100 text-indigo-700 rounded-full flex items-center justify-center text-xs font-bold mt-1 step-num">${num}</span>
+            <div class="flex-1">
+                <textarea name="steps[${i}][description]" rows="2" placeholder="手順の説明"
+                          class="w-full border-gray-300 rounded-md shadow-sm text-sm focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                <input type="file" name="step_images[${i}]" accept="image/jpeg,image/png,image/webp"
+                       class="mt-1 w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:bg-gray-100 file:text-gray-600">
+            </div>
+            <button type="button" onclick="removeStep(this)"
+                    class="text-red-500 hover:text-red-700 text-sm px-1">✕</button>
+        </div>
+    `;
+    container.appendChild(row);
+}
+
+function removeStep(btn) {
+    btn.closest('.step-row').remove();
+    document.querySelectorAll('#steps-container .step-num').forEach((el, i) => {
+        el.textContent = i + 1;
+    });
+}
+</script>
 </x-app-layout>
