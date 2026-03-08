@@ -8,6 +8,7 @@ use App\Models\Recipe;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class RecipeController extends Controller
@@ -41,9 +42,19 @@ class RecipeController extends Controller
     public function store(StoreRecipeRequest $request): RedirectResponse
     {
         $recipe = Auth::user()->recipes()->create([
-            ...$request->validated(),
+            ...$request->safe()->except('images'),
             'status' => 'pending',
         ]);
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $index => $file) {
+                $recipe->recipeImages()->create([
+                    'image_path'   => $file->store('recipe_images', 'public'),
+                    'order'        => $index + 1,
+                    'is_thumbnail' => $index === 0,
+                ]);
+            }
+        }
 
         return redirect()->route('recipes.index')
             ->with('success', 'レシピを投稿しました。管理者の承認後に公開されます。');
@@ -62,7 +73,22 @@ class RecipeController extends Controller
     {
         $this->authorize('update', $recipe);
 
-        $recipe->update($request->validated());
+        $recipe->update($request->safe()->except('images'));
+
+        if ($request->hasFile('images')) {
+            foreach ($recipe->recipeImages as $image) {
+                Storage::disk('public')->delete($image->image_path);
+                $image->forceDelete();
+            }
+
+            foreach ($request->file('images') as $index => $file) {
+                $recipe->recipeImages()->create([
+                    'image_path'   => $file->store('recipe_images', 'public'),
+                    'order'        => $index + 1,
+                    'is_thumbnail' => $index === 0,
+                ]);
+            }
+        }
 
         return redirect()->route('recipes.show', $recipe)
             ->with('success', 'レシピを更新しました。');
@@ -71,6 +97,10 @@ class RecipeController extends Controller
     public function destroy(Recipe $recipe): RedirectResponse
     {
         $this->authorize('delete', $recipe);
+
+        foreach ($recipe->recipeImages as $image) {
+            Storage::disk('public')->delete($image->image_path);
+        }
 
         $recipe->delete();
 

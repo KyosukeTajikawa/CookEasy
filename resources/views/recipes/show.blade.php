@@ -27,12 +27,24 @@
     <div class="py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            {{-- サムネイル画像 --}}
-            @php $thumbnail = $recipe->recipeImages->firstWhere('is_thumbnail', true) ?? $recipe->recipeImages->first(); @endphp
+            {{-- 画像ギャラリー --}}
+            @php
+                $sortedImages = $recipe->recipeImages->sortBy('order');
+                $thumbnail = $sortedImages->firstWhere('is_thumbnail', true) ?? $sortedImages->first();
+            @endphp
             @if ($thumbnail)
                 <img src="{{ asset('storage/' . $thumbnail->image_path) }}"
                      alt="{{ $recipe->title }}"
                      class="w-full rounded-lg shadow object-cover max-h-80">
+            @endif
+            @if ($sortedImages->count() > 1)
+                <div class="flex gap-2 overflow-x-auto">
+                    @foreach ($sortedImages as $image)
+                        <img src="{{ asset('storage/' . $image->image_path) }}"
+                             alt="{{ $recipe->title }}"
+                             class="w-24 h-24 flex-shrink-0 object-cover rounded-md border border-gray-200">
+                    @endforeach
+                </div>
             @endif
 
             {{-- 基本情報 --}}

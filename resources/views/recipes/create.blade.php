@@ -9,7 +9,7 @@
         <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white shadow-sm rounded-lg p-6">
 
-                <form method="POST" action="{{ route('recipes.store') }}">
+                <form method="POST" action="{{ route('recipes.store') }}" enctype="multipart/form-data">
                     @csrf
 
                     {{-- タイトル --}}
@@ -66,6 +66,22 @@
                             @endforeach
                         </div>
                         @error('difficulty')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- 画像 --}}
+                    <div class="mb-6">
+                        <label for="images" class="block text-sm font-medium text-gray-700 mb-1">
+                            画像（複数選択可）
+                        </label>
+                        <input type="file" id="images" name="images[]" multiple accept="image/jpeg,image/png,image/webp"
+                               class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                        <p class="mt-1 text-xs text-gray-400">JPEG・PNG・WebP、各2MB以内。1枚目がサムネイルになります。</p>
+                        @error('images')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                        @error('images.*')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>

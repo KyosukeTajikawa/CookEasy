@@ -18,6 +18,8 @@ class UpdateRecipeRequest extends FormRequest
             'description' => ['required', 'string'],
             'cook_time'   => ['required', 'integer', 'min:1'],
             'difficulty'  => ['required', 'in:超簡単,簡単,普通'],
+            'images'      => ['nullable', 'array'],
+            'images.*'    => ['image', 'mimes:jpeg,png,webp', 'max:2048'],
         ];
     }
 

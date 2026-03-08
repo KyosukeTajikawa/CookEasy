@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateRecipeRequest;
 use App\Models\Recipe;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class RecipeController extends Controller
@@ -29,10 +30,20 @@ class RecipeController extends Controller
 
     public function store(StoreRecipeRequest $request): RedirectResponse
     {
-        Auth::user()->recipes()->create([
-            ...$request->validated(),
+        $recipe = Auth::user()->recipes()->create([
+            ...$request->safe()->except('images'),
             'status' => 'published',
         ]);
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $index => $file) {
+                $recipe->recipeImages()->create([
+                    'image_path'   => $file->store('recipe_images', 'public'),
+                    'order'        => $index + 1,
+                    'is_thumbnail' => $index === 0,
+                ]);
+            }
+        }
 
         return redirect()->route('admin.recipes.index')
             ->with('success', 'レシピを公開しました。');
@@ -45,7 +56,22 @@ class RecipeController extends Controller
 
     public function update(UpdateRecipeRequest $request, Recipe $recipe): RedirectResponse
     {
-        $recipe->update($request->validated());
+        $recipe->update($request->safe()->except('images'));
+
+        if ($request->hasFile('images')) {
+            foreach ($recipe->recipeImages as $image) {
+                Storage::disk('public')->delete($image->image_path);
+                $image->forceDelete();
+            }
+
+            foreach ($request->file('images') as $index => $file) {
+                $recipe->recipeImages()->create([
+                    'image_path'   => $file->store('recipe_images', 'public'),
+                    'order'        => $index + 1,
+                    'is_thumbnail' => $index === 0,
+                ]);
+            }
+        }
 
         return redirect()->route('admin.recipes.index')
             ->with('success', 'レシピを更新しました。');
@@ -53,6 +79,10 @@ class RecipeController extends Controller
 
     public function destroy(Recipe $recipe): RedirectResponse
     {
+        foreach ($recipe->recipeImages as $image) {
+            Storage::disk('public')->delete($image->image_path);
+        }
+
         $recipe->delete();
 
         return redirect()->route('admin.recipes.index')
