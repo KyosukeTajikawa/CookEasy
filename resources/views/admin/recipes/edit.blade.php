@@ -9,7 +9,7 @@
         <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white shadow-sm rounded-lg p-6">
 
-                <form method="POST" action="{{ route('admin.recipes.update', $recipe) }}">
+                <form method="POST" action="{{ route('admin.recipes.update', $recipe) }}" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -67,6 +67,41 @@
                             @endforeach
                         </div>
                         @error('difficulty')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- 既存画像 --}}
+                    @if ($recipe->recipeImages->isNotEmpty())
+                        <div class="mb-4">
+                            <p class="text-sm font-medium text-gray-700 mb-2">現在の画像</p>
+                            <div class="flex flex-wrap gap-2">
+                                @foreach ($recipe->recipeImages->sortBy('order') as $image)
+                                    <div class="relative">
+                                        <img src="{{ asset('storage/' . $image->image_path) }}"
+                                             alt=""
+                                             class="w-24 h-24 object-cover rounded-md border border-gray-200">
+                                        @if ($image->is_thumbnail)
+                                            <span class="absolute top-1 left-1 text-xs bg-indigo-600 text-white px-1 rounded">TOP</span>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    {{-- 画像差し替え --}}
+                    <div class="mb-6">
+                        <label for="images" class="block text-sm font-medium text-gray-700 mb-1">
+                            画像を差し替える（複数選択可）
+                        </label>
+                        <input type="file" id="images" name="images[]" multiple accept="image/jpeg,image/png,image/webp"
+                               class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                        <p class="mt-1 text-xs text-gray-400">選択した場合、既存の画像はすべて置き換えられます。1枚目がサムネイルになります。</p>
+                        @error('images')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                        @error('images.*')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
