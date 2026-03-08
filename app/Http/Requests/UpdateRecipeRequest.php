@@ -18,8 +18,16 @@ class UpdateRecipeRequest extends FormRequest
             'description' => ['required', 'string'],
             'cook_time'   => ['required', 'integer', 'min:1'],
             'difficulty'  => ['required', 'in:超簡単,簡単,普通'],
-            'images'      => ['nullable', 'array'],
-            'images.*'    => ['image', 'mimes:jpeg,png,webp', 'max:2048'],
+            'images'               => ['nullable', 'array'],
+            'images.*'             => ['image', 'mimes:jpeg,png,webp', 'max:2048'],
+            'ingredients'          => ['nullable', 'array'],
+            'ingredients.*.name'   => ['nullable', 'string', 'max:255'],
+            'ingredients.*.quantity' => ['nullable', 'string', 'max:255'],
+            'ingredients.*.unit'   => ['nullable', 'string', 'max:50'],
+            'steps'                => ['nullable', 'array'],
+            'steps.*.description'  => ['nullable', 'string'],
+            'step_images'          => ['nullable', 'array'],
+            'step_images.*'        => ['nullable', 'image', 'mimes:jpeg,png,webp', 'max:2048'],
         ];
     }
 
