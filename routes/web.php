@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\RecipeController as AdminRecipeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RecipeController;
 use Illuminate\Support\Facades\Route;
@@ -41,16 +42,16 @@ Route::middleware('auth')->group(function () {
 
 // 管理者向けルート（auth + admin）
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', fn () => abort(501))->name('index');
 
-    // レシピ管理（12_admin_panel で Controller に置き換え）
-    Route::get('/recipes/create', fn () => abort(501))->name('recipes.create');
-    Route::post('/recipes', fn () => abort(501))->name('recipes.store');
-    Route::get('/recipes/{recipe}/edit', fn () => abort(501))->name('recipes.edit');
-    Route::put('/recipes/{recipe}', fn () => abort(501))->name('recipes.update');
-    Route::delete('/recipes/{recipe}', fn () => abort(501))->name('recipes.destroy');
-    Route::patch('/recipes/{recipe}/approve', fn () => abort(501))->name('recipes.approve');
-    Route::patch('/recipes/{recipe}/reject', fn () => abort(501))->name('recipes.reject');
+    // レシピ管理
+    Route::get('/recipes', [AdminRecipeController::class, 'index'])->name('recipes.index');
+    Route::get('/recipes/create', [AdminRecipeController::class, 'create'])->name('recipes.create');
+    Route::post('/recipes', [AdminRecipeController::class, 'store'])->name('recipes.store');
+    Route::get('/recipes/{recipe}/edit', [AdminRecipeController::class, 'edit'])->name('recipes.edit');
+    Route::put('/recipes/{recipe}', [AdminRecipeController::class, 'update'])->name('recipes.update');
+    Route::delete('/recipes/{recipe}', [AdminRecipeController::class, 'destroy'])->name('recipes.destroy');
+    Route::patch('/recipes/{recipe}/approve', [AdminRecipeController::class, 'approve'])->name('recipes.approve');
+    Route::patch('/recipes/{recipe}/reject', [AdminRecipeController::class, 'reject'])->name('recipes.reject');
 
     // クイズ管理（11_quizzes で Controller に置き換え）
     Route::get('/recipes/{recipe}/quiz', fn () => abort(501))->name('recipes.quiz.show');
