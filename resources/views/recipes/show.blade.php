@@ -4,8 +4,28 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ $recipe->title }}
             </h2>
-            @can('update', $recipe)
-                <div class="flex gap-2">
+            <div class="flex gap-2">
+                @auth
+                    @if ($isBookmarked)
+                        <form method="POST" action="{{ route('bookmarks.destroy', $recipe) }}">
+                            @csrf @method('DELETE')
+                            <button type="submit"
+                                    class="px-3 py-1 text-sm bg-yellow-400 text-white rounded hover:bg-yellow-500">
+                                ★ 保存済み
+                            </button>
+                        </form>
+                    @else
+                        <form method="POST" action="{{ route('bookmarks.store', $recipe) }}">
+                            @csrf
+                            <button type="submit"
+                                    class="px-3 py-1 text-sm bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
+                                ☆ 保存する
+                            </button>
+                        </form>
+                    @endif
+                @endauth
+
+                @can('update', $recipe)
                     <a href="{{ route('recipes.edit', $recipe) }}"
                        class="px-3 py-1 text-sm bg-yellow-500 text-white rounded hover:bg-yellow-600">
                         編集
@@ -19,8 +39,8 @@
                             削除
                         </button>
                     </form>
-                </div>
-            @endcan
+                @endcan
+            </div>
         </div>
     </x-slot>
 

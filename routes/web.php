@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\RecipeController as AdminRecipeController;
+use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RecipeController;
 use Illuminate\Support\Facades\Route;
@@ -22,10 +23,10 @@ Route::middleware('auth')->group(function () {
     // マイページ（14_mypage で Controller に置き換え）
     Route::get('/mypage/recipes', fn () => abort(501))->name('mypage.recipes');
 
-    // ブックマーク（09_bookmarks で Controller に置き換え）
-    Route::get('/bookmarks', fn () => abort(501))->name('bookmarks.index');
-    Route::post('/bookmarks/{recipe}', fn () => abort(501))->name('bookmarks.store');
-    Route::delete('/bookmarks/{recipe}', fn () => abort(501))->name('bookmarks.destroy');
+    // ブックマーク
+    Route::get('/bookmarks', [BookmarkController::class, 'index'])->name('bookmarks.index');
+    Route::post('/bookmarks/{recipe}', [BookmarkController::class, 'store'])->name('bookmarks.store');
+    Route::delete('/bookmarks/{recipe}', [BookmarkController::class, 'destroy'])->name('bookmarks.destroy');
 
     // レビュー（10_reviews で Controller に置き換え）
     Route::post('/recipes/{recipe}/reviews', fn () => abort(501))->name('reviews.store');

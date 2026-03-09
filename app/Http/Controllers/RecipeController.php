@@ -31,7 +31,10 @@ class RecipeController extends Controller
 
         $recipe->load(['user', 'recipeImages', 'ingredients' => fn ($q) => $q->orderBy('order'), 'steps' => fn ($q) => $q->orderBy('order'), 'reviews.user']);
 
-        return view('recipes.show', compact('recipe'));
+        $isBookmarked = Auth::check()
+            && $recipe->bookmarks()->where('user_id', Auth::id())->exists();
+
+        return view('recipes.show', compact('recipe', 'isBookmarked'));
     }
 
     public function create(): View
