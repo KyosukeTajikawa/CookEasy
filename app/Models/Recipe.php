@@ -78,6 +78,23 @@ class Recipe extends Model
         return $query->where('status', 'published');
     }
 
+    public function scopeFilterByDifficulty(Builder $query, ?string $difficulty): Builder
+    {
+        return $difficulty ? $query->where('difficulty', $difficulty) : $query;
+    }
+
+    public function scopeFilterByCookTime(Builder $query, ?int $max): Builder
+    {
+        return $max ? $query->where('cook_time', '<=', $max) : $query;
+    }
+
+    public function scopeFilterByIngredient(Builder $query, ?string $keyword): Builder
+    {
+        return $keyword
+            ? $query->whereHas('ingredients', fn ($q) => $q->where('name', 'LIKE', '%' . $keyword . '%'))
+            : $query;
+    }
+
     /**
      * レシピを投稿したユーザー
      *
