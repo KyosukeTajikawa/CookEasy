@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\RecipeController as AdminRecipeController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\ProfileController;
@@ -43,6 +44,9 @@ Route::middleware('auth')->group(function () {
 
 // 管理者向けルート（auth + admin）
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+
+    // ダッシュボード
+    Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     // レシピ管理
     Route::get('/recipes', [AdminRecipeController::class, 'index'])->name('recipes.index');
