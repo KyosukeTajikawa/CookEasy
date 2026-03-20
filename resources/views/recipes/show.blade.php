@@ -119,17 +119,75 @@
             {{-- レビュー --}}
             <div class="bg-white shadow-sm rounded-lg p-6">
                 <h3 class="font-semibold text-lg text-gray-800 mb-4">レビュー（{{ $recipe->reviews->count() }}件）</h3>
+
+                @if (session('success'))
+                    <div class="mb-4 text-sm text-green-700 bg-green-100 rounded p-3">{{ session('success') }}</div>
+                @endif
+                @if (session('error'))
+                    <div class="mb-4 text-sm text-red-700 bg-red-100 rounded p-3">{{ session('error') }}</div>
+                @endif
+
                 @forelse ($recipe->reviews as $review)
                     <div class="border-b border-gray-100 py-3 last:border-0">
-                        <div class="flex items-center gap-2 text-sm">
-                            <span class="font-medium text-gray-700">{{ $review->user->name }}</span>
-                            <span class="text-yellow-500">{{ str_repeat('★', $review->rating) }}{{ str_repeat('☆', 5 - $review->rating) }}</span>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2 text-sm">
+                                <span class="font-medium text-gray-700">{{ $review->user->name }}</span>
+                                <span class="text-yellow-500">{{ str_repeat('★', $review->rating) }}{{ str_repeat('☆', 5 - $review->rating) }}</span>
+                                <span class="text-gray-400 text-xs">{{ $review->created_at->format('Y/m/d') }}</span>
+                            </div>
+                            @can('delete', $review)
+                                <form method="POST" action="{{ route('reviews.destroy', $review) }}"
+                                      onsubmit="return confirm('このレビューを削除しますか？')">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="text-xs text-red-500 hover:underline">削除</button>
+                                </form>
+                            @endcan
                         </div>
                         <p class="mt-1 text-sm text-gray-600">{{ $review->comment }}</p>
                     </div>
                 @empty
                     <p class="text-sm text-gray-400">まだレビューはありません。</p>
                 @endforelse
+
+                @auth
+                    @php
+                        $hasReviewed = $recipe->reviews->contains('user_id', auth()->id());
+                    @endphp
+                    @unless ($hasReviewed)
+                        <div class="mt-6 pt-4 border-t border-gray-100">
+                            <h4 class="text-sm font-semibold text-gray-700 mb-3">レビューを投稿する</h4>
+                            <form method="POST" action="{{ route('reviews.store', $recipe) }}">
+                                @csrf
+                                <div class="mb-3">
+                                    <label class="block text-sm text-gray-600 mb-1">評価</label>
+                                    <select name="rating" class="border border-gray-300 rounded px-3 py-1 text-sm">
+                                        @for ($i = 5; $i >= 1; $i--)
+                                            <option value="{{ $i }}" {{ old('rating') == $i ? 'selected' : '' }}>
+                                                {{ str_repeat('★', $i) }}{{ str_repeat('☆', 5 - $i) }}
+                                            </option>
+                                        @endfor
+                                    </select>
+                                    @error('rating')
+                                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label class="block text-sm text-gray-600 mb-1">コメント</label>
+                                    <textarea name="comment" rows="3"
+                                              class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                                              placeholder="レシピの感想を書いてください">{{ old('comment') }}</textarea>
+                                    @error('comment')
+                                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <button type="submit"
+                                        class="px-4 py-2 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700">
+                                    投稿する
+                                </button>
+                            </form>
+                        </div>
+                    @endunless
+                @endauth
             </div>
 
             <div class="text-center">

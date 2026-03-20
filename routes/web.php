@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\Admin\RecipeController as AdminRecipeController;
+use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Route;
 
 // ゲスト（認証不要・固定パス）
@@ -28,9 +30,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/bookmarks/{recipe}', [BookmarkController::class, 'store'])->name('bookmarks.store');
     Route::delete('/bookmarks/{recipe}', [BookmarkController::class, 'destroy'])->name('bookmarks.destroy');
 
-    // レビュー（10_reviews で Controller に置き換え）
-    Route::post('/recipes/{recipe}/reviews', fn () => abort(501))->name('reviews.store');
-    Route::delete('/reviews/{review}', fn () => abort(501))->name('reviews.destroy');
+    // レビュー
+    Route::post('/recipes/{recipe}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 
     // クイズ回答（11_quizzes で Controller に置き換え）
     Route::post('/recipes/{recipe}/quiz/answer', fn () => abort(501))->name('quiz.answer');
@@ -60,9 +62,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::put('/recipes/{recipe}/quiz', fn () => abort(501))->name('recipes.quiz.update');
     Route::delete('/recipes/{recipe}/quiz', fn () => abort(501))->name('recipes.quiz.destroy');
 
-    // レビュー管理（12_admin_panel で Controller に置き換え）
-    Route::get('/reviews', fn () => abort(501))->name('reviews.index');
-    Route::delete('/reviews/{review}', fn () => abort(501))->name('reviews.destroy');
+    // レビュー管理
+    Route::get('/reviews', [AdminReviewController::class, 'index'])->name('reviews.index');
+    Route::delete('/reviews/{review}', [AdminReviewController::class, 'destroy'])->name('reviews.destroy');
 });
 
 // ゲスト（認証不要・ワイルドカード）※ 固定パスルートの後に定義
