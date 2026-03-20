@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\QuizController as AdminQuizController;
 use App\Http\Controllers\Admin\RecipeController as AdminRecipeController;
 use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
 use App\Http\Controllers\BookmarkController;
+use App\Http\Controllers\MypageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\RecipeController;
@@ -25,8 +26,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/recipes/{recipe}', [RecipeController::class, 'update'])->name('recipes.update');
     Route::delete('/recipes/{recipe}', [RecipeController::class, 'destroy'])->name('recipes.destroy');
 
-    // マイページ（14_mypage で Controller に置き換え）
-    Route::get('/mypage/recipes', fn () => abort(501))->name('mypage.recipes');
+    // マイページ
+    Route::get('/mypage/recipes', [MypageController::class, 'index'])->name('mypage.recipes');
 
     // ブックマーク
     Route::get('/bookmarks', [BookmarkController::class, 'index'])->name('bookmarks.index');

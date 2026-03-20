@@ -19,6 +19,9 @@
                         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                             {{ __('Dashboard') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('mypage.recipes')" :active="request()->routeIs('mypage.*')">
+                            {{ __('マイページ') }}
+                        </x-nav-link>
                     @endauth
                 </div>
             </div>
@@ -83,6 +86,9 @@
             @auth
                 <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                     {{ __('Dashboard') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('mypage.recipes')" :active="request()->routeIs('mypage.*')">
+                    {{ __('マイページ') }}
                 </x-responsive-nav-link>
             @endauth
         </div>
