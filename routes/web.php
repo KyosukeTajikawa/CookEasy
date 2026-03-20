@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\QuizController as AdminQuizController;
 use App\Http\Controllers\Admin\RecipeController as AdminRecipeController;
 use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\QuizController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Route;
@@ -34,8 +36,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/recipes/{recipe}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 
-    // クイズ回答（11_quizzes で Controller に置き換え）
-    Route::post('/recipes/{recipe}/quiz/answer', fn () => abort(501))->name('quiz.answer');
+    // クイズ回答
+    Route::post('/recipes/{recipe}/quiz/answer', [QuizController::class, 'answer'])->name('quiz.answer');
 
     // プロフィール（Breeze デフォルト）
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -56,11 +58,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::patch('/recipes/{recipe}/approve', [AdminRecipeController::class, 'approve'])->name('recipes.approve');
     Route::patch('/recipes/{recipe}/reject', [AdminRecipeController::class, 'reject'])->name('recipes.reject');
 
-    // クイズ管理（11_quizzes で Controller に置き換え）
-    Route::get('/recipes/{recipe}/quiz', fn () => abort(501))->name('recipes.quiz.show');
-    Route::post('/recipes/{recipe}/quiz', fn () => abort(501))->name('recipes.quiz.store');
-    Route::put('/recipes/{recipe}/quiz', fn () => abort(501))->name('recipes.quiz.update');
-    Route::delete('/recipes/{recipe}/quiz', fn () => abort(501))->name('recipes.quiz.destroy');
+    // クイズ管理
+    Route::get('/recipes/{recipe}/quiz/create', [AdminQuizController::class, 'create'])->name('recipes.quiz.create');
+    Route::post('/recipes/{recipe}/quiz', [AdminQuizController::class, 'store'])->name('recipes.quiz.store');
+    Route::get('/recipes/{recipe}/quiz/edit', [AdminQuizController::class, 'edit'])->name('recipes.quiz.edit');
+    Route::put('/recipes/{recipe}/quiz', [AdminQuizController::class, 'update'])->name('recipes.quiz.update');
+    Route::delete('/recipes/{recipe}/quiz', [AdminQuizController::class, 'destroy'])->name('recipes.quiz.destroy');
 
     // レビュー管理
     Route::get('/reviews', [AdminReviewController::class, 'index'])->name('reviews.index');
@@ -69,6 +72,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
 // ゲスト（認証不要・ワイルドカード）※ 固定パスルートの後に定義
 Route::get('/recipes/{recipe}', [RecipeController::class, 'show'])->name('recipes.show');
-Route::get('/recipes/{recipe}/quiz', fn () => abort(501))->name('recipes.quiz.show');
+Route::get('/recipes/{recipe}/quiz', [QuizController::class, 'show'])->name('recipes.quiz.show');
 
 require __DIR__.'/auth.php';
