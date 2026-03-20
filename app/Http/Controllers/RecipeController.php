@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateRecipeRequest;
 use App\Models\Recipe;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -15,12 +16,20 @@ class RecipeController extends Controller
 {
     use AuthorizesRequests;
 
-    public function index(): View
+    public function index(Request $request): View
     {
+        $difficulty = $request->input('difficulty');
+        $cookTime   = $request->integer('cook_time') ?: null;
+        $ingredient = $request->input('ingredient');
+
         $recipes = Recipe::published()
+            ->filterByDifficulty($difficulty)
+            ->filterByCookTime($cookTime)
+            ->filterByIngredient($ingredient)
             ->with(['user', 'recipeImages' => fn ($q) => $q->where('is_thumbnail', true)])
             ->latest()
-            ->paginate(12);
+            ->paginate(12)
+            ->withQueryString();
 
         return view('recipes.index', compact('recipes'));
     }

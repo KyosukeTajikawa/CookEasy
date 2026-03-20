@@ -22,6 +22,49 @@
                 </div>
             @endif
 
+            {{-- フィルターフォーム --}}
+            <form method="GET" action="{{ route('recipes.index') }}"
+                  class="bg-white shadow-sm rounded-lg p-4 mb-6 flex flex-wrap gap-3 items-end">
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">難易度</label>
+                    <select name="difficulty"
+                            class="border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-400">
+                        <option value="">指定なし</option>
+                        @foreach (['超簡単', '簡単', '普通'] as $level)
+                            <option value="{{ $level }}" {{ request('difficulty') === $level ? 'selected' : '' }}>
+                                {{ $level }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">調理時間（〜分以内）</label>
+                    <input type="number" name="cook_time" min="1"
+                           value="{{ request('cook_time') }}"
+                           placeholder="例：30"
+                           class="w-28 border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-400">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">食材名</label>
+                    <input type="text" name="ingredient"
+                           value="{{ request('ingredient') }}"
+                           placeholder="例：たまご"
+                           class="border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-400">
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit"
+                            class="px-4 py-1.5 bg-indigo-600 text-white text-sm rounded hover:bg-indigo-700">
+                        絞り込む
+                    </button>
+                    @if (request('difficulty') || request('cook_time') || request('ingredient'))
+                        <a href="{{ route('recipes.index') }}"
+                           class="px-4 py-1.5 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300">
+                            リセット
+                        </a>
+                    @endif
+                </div>
+            </form>
+
             @if ($recipes->isEmpty())
                 <p class="text-center text-gray-500 py-16">まだレシピがありません。</p>
             @else
