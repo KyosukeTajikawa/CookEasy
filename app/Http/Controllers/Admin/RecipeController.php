@@ -46,11 +46,13 @@ class RecipeController extends Controller
         }
 
         return redirect()->route('admin.recipes.index')
-            ->with('success', 'レシピを公開しました。');
+            ->with('success', __('admin.published_success'));
     }
 
     public function edit(Recipe $recipe): View
     {
+        $recipe->load(['recipeImages', 'quiz']);
+
         return view('admin.recipes.edit', compact('recipe'));
     }
 
@@ -74,7 +76,7 @@ class RecipeController extends Controller
         }
 
         return redirect()->route('admin.recipes.index')
-            ->with('success', 'レシピを更新しました。');
+            ->with('success', __('admin.updated_success'));
     }
 
     public function destroy(Recipe $recipe): RedirectResponse
@@ -86,7 +88,7 @@ class RecipeController extends Controller
         $recipe->delete();
 
         return redirect()->route('admin.recipes.index')
-            ->with('success', 'レシピを削除しました。');
+            ->with('success', __('admin.deleted_success'));
     }
 
     public function approve(Recipe $recipe): RedirectResponse
@@ -94,7 +96,7 @@ class RecipeController extends Controller
         $recipe->update(['status' => 'published']);
 
         return redirect()->route('admin.recipes.index')
-            ->with('success', 'レシピを承認しました。');
+            ->with('success', __('admin.approved_success'));
     }
 
     public function reject(Recipe $recipe): RedirectResponse
@@ -102,6 +104,6 @@ class RecipeController extends Controller
         $recipe->update(['status' => 'rejected']);
 
         return redirect()->route('admin.recipes.index')
-            ->with('success', 'レシピを却下しました。');
+            ->with('success', __('admin.rejected_success'));
     }
 }

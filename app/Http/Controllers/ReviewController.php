@@ -17,7 +17,7 @@ class ReviewController extends Controller
             ->exists();
 
         if ($alreadyReviewed) {
-            return back()->with('error', 'このレシピにはすでにレビューを投稿しています。');
+            return back()->with('error', __('reviews.already_reviewed'));
         }
 
         $recipe->reviews()->create([
@@ -26,7 +26,7 @@ class ReviewController extends Controller
             'comment' => $request->comment,
         ]);
 
-        return back()->with('success', 'レビューを投稿しました。');
+        return back()->with('success', __('reviews.stored_success'));
     }
 
     public function destroy(Review $review): RedirectResponse
@@ -35,6 +35,6 @@ class ReviewController extends Controller
 
         $review->delete();
 
-        return back()->with('success', 'レビューを削除しました。');
+        return back()->with('success', __('reviews.deleted_success'));
     }
 }

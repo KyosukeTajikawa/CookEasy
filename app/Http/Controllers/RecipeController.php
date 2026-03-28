@@ -26,7 +26,7 @@ class RecipeController extends Controller
             ->filterByDifficulty($difficulty)
             ->filterByCookTime($cookTime)
             ->filterByIngredient($ingredient)
-            ->with(['user', 'recipeImages' => fn ($q) => $q->where('is_thumbnail', true)])
+            ->with(['user', 'recipeImages' => fn ($q) => $q->where('is_thumbnail', true), 'quiz'])
             ->latest()
             ->paginate(12)
             ->withQueryString();
@@ -38,7 +38,7 @@ class RecipeController extends Controller
     {
         abort_unless($recipe->status === 'published', 404);
 
-        $recipe->load(['user', 'recipeImages', 'ingredients' => fn ($q) => $q->orderBy('order'), 'steps' => fn ($q) => $q->orderBy('order'), 'reviews.user']);
+        $recipe->load(['user', 'recipeImages', 'ingredients' => fn ($q) => $q->orderBy('order'), 'steps' => fn ($q) => $q->orderBy('order'), 'reviews.user', 'quiz']);
 
         $isBookmarked = Auth::check()
             && $recipe->bookmarks()->where('user_id', Auth::id())->exists();
@@ -63,7 +63,7 @@ class RecipeController extends Controller
         $this->saveSteps($request, $recipe);
 
         return redirect()->route('recipes.index')
-            ->with('success', 'レシピを投稿しました。管理者の承認後に公開されます。');
+            ->with('success', __('recipes.posted_success'));
     }
 
     public function edit(Recipe $recipe): View
@@ -102,7 +102,7 @@ class RecipeController extends Controller
         $this->saveSteps($request, $recipe);
 
         return redirect()->route('recipes.show', $recipe)
-            ->with('success', 'レシピを更新しました。');
+            ->with('success', __('recipes.updated_success'));
     }
 
     public function destroy(Recipe $recipe): RedirectResponse
@@ -121,7 +121,7 @@ class RecipeController extends Controller
         $recipe->delete();
 
         return redirect()->route('recipes.index')
-            ->with('success', 'レシピを削除しました。');
+            ->with('success', __('recipes.deleted_success'));
     }
 
     private function saveImages($request, Recipe $recipe): void

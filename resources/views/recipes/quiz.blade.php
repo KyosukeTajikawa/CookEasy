@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            クイズ：{{ $recipe->title }}
+            {{ __('quiz.title', ['title' => $recipe->title]) }}
         </h2>
     </x-slot>
 
@@ -12,11 +12,31 @@
             @if (session('quiz_result'))
                 @if (session('quiz_result') === 'correct')
                     <div class="bg-green-100 border border-green-300 text-green-800 rounded-lg p-4 text-center font-semibold">
-                        正解！ 素晴らしいです！
+                        {{ __('quiz.correct') }}
+                    </div>
+                    <div class="flex justify-center gap-4">
+                        <a href="{{ route('recipes.index') }}"
+                           class="px-4 py-2 bg-indigo-600 text-white text-sm rounded hover:bg-indigo-700">
+                            {{ __('common.back_to_list') }}
+                        </a>
+                        <a href="{{ route('recipes.show', $recipe) }}"
+                           class="px-4 py-2 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300">
+                            {{ __('quiz.back_to_recipe') }}
+                        </a>
                     </div>
                 @else
                     <div class="bg-red-100 border border-red-300 text-red-800 rounded-lg p-4 text-center font-semibold">
-                        不正解... 正解は「{{ $quiz->answer }}」でした。
+                        {{ __('quiz.incorrect', ['answer' => $quiz->answer]) }}
+                    </div>
+                    <div class="flex justify-center gap-4">
+                        <a href="{{ route('recipes.show', $recipe) }}"
+                           class="px-4 py-2 bg-yellow-500 text-white text-sm rounded hover:bg-yellow-600">
+                            {{ __('quiz.back_to_recipe') }}
+                        </a>
+                        <a href="{{ route('recipes.quiz.show', $recipe) }}"
+                           class="px-4 py-2 bg-indigo-600 text-white text-sm rounded hover:bg-indigo-700">
+                            🔁 {{ __('quiz.answer_button') }}
+                        </a>
                     </div>
                 @endif
             @endif
@@ -46,7 +66,7 @@
                         <div class="mt-6">
                             <button type="submit"
                                     class="px-5 py-2 bg-indigo-600 text-white text-sm rounded hover:bg-indigo-700">
-                                回答する
+                                {{ __('quiz.answer_button') }}
                             </button>
                         </div>
                     </form>
@@ -59,15 +79,14 @@
                         @endforeach
                     </div>
                     <p class="mt-4 text-sm text-gray-500">
-                        回答するには
-                        <a href="{{ route('login') }}" class="text-indigo-600 hover:underline">ログイン</a>
-                        してください。
+                        <a href="{{ route('login') }}" class="text-indigo-600 hover:underline">{{ __('quiz.login_link') }}</a>
+                        {{ __('quiz.answer_button') }}
                     </p>
                 @endauth
             </div>
 
             <div class="text-center">
-                <a href="{{ route('recipes.show', $recipe) }}" class="text-sm text-indigo-600 hover:underline">← レシピに戻る</a>
+                <a href="{{ route('recipes.show', $recipe) }}" class="text-sm text-indigo-600 hover:underline">{{ __('quiz.back_to_recipe') }}</a>
             </div>
 
         </div>

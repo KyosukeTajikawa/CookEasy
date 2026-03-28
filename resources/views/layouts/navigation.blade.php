@@ -13,21 +13,34 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('recipes.index')" :active="request()->routeIs('recipes.index', 'home')">
-                        {{ __('レシピ') }}
+                        {{ __('nav.recipes') }}
                     </x-nav-link>
                     @auth
                         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                            {{ __('Dashboard') }}
+                            {{ __('nav.dashboard') }}
                         </x-nav-link>
                         <x-nav-link :href="route('mypage.recipes')" :active="request()->routeIs('mypage.*')">
-                            {{ __('マイページ') }}
+                            {{ __('nav.mypage') }}
                         </x-nav-link>
                     @endauth
                 </div>
             </div>
 
             <!-- Settings Dropdown / Guest links -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
+            <div class="hidden sm:flex sm:items-center sm:ms-6 gap-2">
+                <!-- Language Switcher -->
+                <div class="flex items-center gap-1 text-sm me-2">
+                    <a href="{{ route('language.switch', 'ja') }}"
+                       class="{{ app()->getLocale() === 'ja' ? 'font-bold text-indigo-600' : 'text-gray-500 hover:text-gray-700' }}">
+                        JA
+                    </a>
+                    <span class="text-gray-300">|</span>
+                    <a href="{{ route('language.switch', 'en') }}"
+                       class="{{ app()->getLocale() === 'en' ? 'font-bold text-indigo-600' : 'text-gray-500 hover:text-gray-700' }}">
+                        EN
+                    </a>
+                </div>
+
                 @auth
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
@@ -44,7 +57,7 @@
 
                         <x-slot name="content">
                             <x-dropdown-link :href="route('profile.edit')">
-                                {{ __('Profile') }}
+                                {{ __('nav.profile') }}
                             </x-dropdown-link>
 
                             <!-- Authentication -->
@@ -54,14 +67,14 @@
                                 <x-dropdown-link :href="route('logout')"
                                         onclick="event.preventDefault();
                                                     this.closest('form').submit();">
-                                    {{ __('Log Out') }}
+                                    {{ __('nav.logout') }}
                                 </x-dropdown-link>
                             </form>
                         </x-slot>
                     </x-dropdown>
                 @else
-                    <a href="{{ route('login') }}" class="text-sm text-gray-700 hover:text-gray-900 me-4">ログイン</a>
-                    <a href="{{ route('register') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">新規登録</a>
+                    <a href="{{ route('login') }}" class="text-sm text-gray-700 hover:text-gray-900 me-4">{{ __('nav.login') }}</a>
+                    <a href="{{ route('register') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">{{ __('nav.register') }}</a>
                 @endauth
             </div>
 
@@ -81,16 +94,30 @@
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('recipes.index')" :active="request()->routeIs('recipes.index', 'home')">
-                {{ __('レシピ') }}
+                {{ __('nav.recipes') }}
             </x-responsive-nav-link>
             @auth
                 <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                    {{ __('Dashboard') }}
+                    {{ __('nav.dashboard') }}
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('mypage.recipes')" :active="request()->routeIs('mypage.*')">
-                    {{ __('マイページ') }}
+                    {{ __('nav.mypage') }}
                 </x-responsive-nav-link>
             @endauth
+        </div>
+
+        <!-- Language Switcher (Responsive) -->
+        <div class="pt-2 pb-3 border-t border-gray-200 px-4">
+            <div class="flex gap-3 text-sm">
+                <a href="{{ route('language.switch', 'ja') }}"
+                   class="{{ app()->getLocale() === 'ja' ? 'font-bold text-indigo-600' : 'text-gray-500' }}">
+                    日本語
+                </a>
+                <a href="{{ route('language.switch', 'en') }}"
+                   class="{{ app()->getLocale() === 'en' ? 'font-bold text-indigo-600' : 'text-gray-500' }}">
+                    English
+                </a>
+            </div>
         </div>
 
         <!-- Responsive Settings Options -->
@@ -103,7 +130,7 @@
 
                 <div class="mt-3 space-y-1">
                     <x-responsive-nav-link :href="route('profile.edit')">
-                        {{ __('Profile') }}
+                        {{ __('nav.profile') }}
                     </x-responsive-nav-link>
 
                     <!-- Authentication -->
@@ -113,7 +140,7 @@
                         <x-responsive-nav-link :href="route('logout')"
                                 onclick="event.preventDefault();
                                             this.closest('form').submit();">
-                            {{ __('Log Out') }}
+                            {{ __('nav.logout') }}
                         </x-responsive-nav-link>
                     </form>
                 </div>
@@ -121,12 +148,10 @@
         @else
             <div class="pt-4 pb-1 border-t border-gray-200">
                 <div class="mt-3 space-y-1 px-4">
-                    <a href="{{ route('login') }}" class="block text-sm text-gray-700 py-2">ログイン</a>
-                    <a href="{{ route('register') }}" class="block text-sm text-indigo-600 py-2">新規登録</a>
+                    <a href="{{ route('login') }}" class="block text-sm text-gray-700 py-2">{{ __('nav.login') }}</a>
+                    <a href="{{ route('register') }}" class="block text-sm text-indigo-600 py-2">{{ __('nav.register') }}</a>
                 </div>
             </div>
         @endauth
     </div>
 </nav>
-
-
