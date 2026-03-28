@@ -38,8 +38,8 @@ class RecipeController extends Controller
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $index => $file) {
                 $recipe->recipeImages()->create([
-                    'image_path'   => $file->store('recipe_images', 'public'),
-                    'order'        => $index + 1,
+                    'image_path' => $file->store('recipe_images', 'public'),
+                    'order' => $index + 1,
                     'is_thumbnail' => $index === 0,
                 ]);
             }
@@ -68,8 +68,8 @@ class RecipeController extends Controller
 
             foreach ($request->file('images') as $index => $file) {
                 $recipe->recipeImages()->create([
-                    'image_path'   => $file->store('recipe_images', 'public'),
-                    'order'        => $index + 1,
+                    'image_path' => $file->store('recipe_images', 'public'),
+                    'order' => $index + 1,
                     'is_thumbnail' => $index === 0,
                 ]);
             }

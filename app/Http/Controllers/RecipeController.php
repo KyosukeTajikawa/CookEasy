@@ -19,7 +19,7 @@ class RecipeController extends Controller
     public function index(Request $request): View
     {
         $difficulty = $request->input('difficulty');
-        $cookTime   = $request->integer('cook_time') ?: null;
+        $cookTime = $request->integer('cook_time') ?: null;
         $ingredient = $request->input('ingredient');
 
         $recipes = Recipe::published()
@@ -129,8 +129,8 @@ class RecipeController extends Controller
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $index => $file) {
                 $recipe->recipeImages()->create([
-                    'image_path'   => $file->store('recipe_images', 'public'),
-                    'order'        => $index + 1,
+                    'image_path' => $file->store('recipe_images', 'public'),
+                    'order' => $index + 1,
                     'is_thumbnail' => $index === 0,
                 ]);
             }
@@ -145,10 +145,10 @@ class RecipeController extends Controller
                 continue;
             }
             $recipe->ingredients()->create([
-                'name'     => $ingredient['name'],
+                'name' => $ingredient['name'],
                 'quantity' => $ingredient['quantity'] ?? '',
-                'unit'     => $ingredient['unit'] ?? '',
-                'order'    => $order++,
+                'unit' => $ingredient['unit'] ?? '',
+                'order' => $order++,
             ]);
         }
     }
@@ -162,13 +162,13 @@ class RecipeController extends Controller
                 continue;
             }
             $imagePath = null;
-            if (!empty($stepImages[$index])) {
+            if (! empty($stepImages[$index])) {
                 $imagePath = $stepImages[$index]->store('step_images', 'public');
             }
             $recipe->steps()->create([
                 'description' => $step['description'],
-                'image_path'  => $imagePath,
-                'order'       => $order++,
+                'image_path' => $imagePath,
+                'order' => $order++,
             ]);
         }
     }

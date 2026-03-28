@@ -81,8 +81,6 @@ class User extends Authenticatable
 
     /**
      * 管理者かどうかを返す
-     *
-     * @return bool
      */
     public function isAdmin(): bool
     {

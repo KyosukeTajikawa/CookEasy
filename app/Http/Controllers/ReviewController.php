@@ -22,7 +22,7 @@ class ReviewController extends Controller
 
         $recipe->reviews()->create([
             'user_id' => Auth::id(),
-            'rating'  => $request->rating,
+            'rating' => $request->rating,
             'comment' => $request->comment,
         ]);
 

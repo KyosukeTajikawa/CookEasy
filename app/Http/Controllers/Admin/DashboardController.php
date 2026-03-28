@@ -13,10 +13,10 @@ class DashboardController extends Controller
     public function index(): View
     {
         $stats = [
-            'pending'   => Recipe::where('status', 'pending')->count(),
+            'pending' => Recipe::where('status', 'pending')->count(),
             'published' => Recipe::where('status', 'published')->count(),
-            'users'     => User::count(),
-            'reviews'   => Review::count(),
+            'users' => User::count(),
+            'reviews' => Review::count(),
         ];
 
         return view('admin.dashboard', compact('stats'));
