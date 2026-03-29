@@ -11,7 +11,7 @@
                             @csrf @method('DELETE')
                             <button type="submit"
                                     class="px-3 py-1 text-sm bg-yellow-400 text-white rounded hover:bg-yellow-500">
-                                ★ 保存済み
+                                {{ __('bookmarks.saved') }}
                             </button>
                         </form>
                     @else
@@ -19,7 +19,7 @@
                             @csrf
                             <button type="submit"
                                     class="px-3 py-1 text-sm bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
-                                ☆ 保存する
+                                {{ __('bookmarks.save') }}
                             </button>
                         </form>
                     @endif
@@ -28,15 +28,15 @@
                 @can('update', $recipe)
                     <a href="{{ route('recipes.edit', $recipe) }}"
                        class="px-3 py-1 text-sm bg-yellow-500 text-white rounded hover:bg-yellow-600">
-                        編集
+                        {{ __('common.edit') }}
                     </a>
                     <form method="POST" action="{{ route('recipes.destroy', $recipe) }}"
-                          onsubmit="return confirm('このレシピを削除しますか？')">
+                          onsubmit="return confirm('{{ __('recipes.delete_confirm') }}')">
                         @csrf
                         @method('DELETE')
                         <button type="submit"
                                 class="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700">
-                            削除
+                            {{ __('common.delete') }}
                         </button>
                     </form>
                 @endcan
@@ -70,9 +70,9 @@
             {{-- 基本情報 --}}
             <div class="bg-white shadow-sm rounded-lg p-6">
                 <div class="flex gap-6 text-sm text-gray-600 mb-4">
-                    <span>⏱ 調理時間：{{ $recipe->cook_time }}分</span>
-                    <span>難易度：{{ $recipe->difficulty }}</span>
-                    <span>投稿者：{{ $recipe->user->name }}</span>
+                    <span>⏱ {{ $recipe->cook_time }}{{ __('recipes.cook_time_minutes') }}</span>
+                    <span>{{ $recipe->difficulty }}</span>
+                    <span>{{ __('recipes.posted_by') }}{{ $recipe->user->name }}</span>
                 </div>
                 <p class="text-gray-700 whitespace-pre-wrap">{{ $recipe->description }}</p>
             </div>
@@ -80,7 +80,7 @@
             {{-- 材料 --}}
             @if ($recipe->ingredients->isNotEmpty())
                 <div class="bg-white shadow-sm rounded-lg p-6">
-                    <h3 class="font-semibold text-lg text-gray-800 mb-4">材料</h3>
+                    <h3 class="font-semibold text-lg text-gray-800 mb-4">{{ __('recipes.ingredients_title') }}</h3>
                     <ul class="divide-y divide-gray-100">
                         @foreach ($recipe->ingredients as $ingredient)
                             <li class="py-2 flex justify-between text-sm text-gray-700">
@@ -95,7 +95,7 @@
             {{-- 手順 --}}
             @if ($recipe->steps->isNotEmpty())
                 <div class="bg-white shadow-sm rounded-lg p-6">
-                    <h3 class="font-semibold text-lg text-gray-800 mb-4">作り方</h3>
+                    <h3 class="font-semibold text-lg text-gray-800 mb-4">{{ __('recipes.steps_title') }}</h3>
                     <ol class="space-y-4">
                         @foreach ($recipe->steps as $step)
                             <li class="flex gap-4">
@@ -106,7 +106,7 @@
                                     <p class="text-gray-700 whitespace-pre-wrap">{{ $step->description }}</p>
                                     @if ($step->image_path)
                                         <img src="{{ asset('storage/' . $step->image_path) }}"
-                                             alt="手順{{ $loop->iteration }}"
+                                             alt="Step {{ $loop->iteration }}"
                                              class="mt-2 rounded-md max-h-48 object-cover">
                                     @endif
                                 </div>
@@ -116,9 +116,28 @@
                 </div>
             @endif
 
+            {{-- クイズ --}}
+            @if ($recipe->quiz)
+                <div class="bg-indigo-50 border border-indigo-200 shadow-sm rounded-lg p-6">
+                    <h3 class="font-semibold text-lg text-indigo-800 mb-2">🎯 {{ __('quiz.title', ['title' => '']) }}</h3>
+                    <p class="text-sm text-indigo-700 mb-4">{{ $recipe->quiz->question }}</p>
+                    @auth
+                        <a href="{{ route('recipes.quiz.show', $recipe) }}"
+                           class="inline-block px-4 py-2 bg-indigo-600 text-white text-sm rounded hover:bg-indigo-700">
+                            {{ __('quiz.answer_button') }} →
+                        </a>
+                    @else
+                        <p class="text-sm text-indigo-600">
+                            <a href="{{ route('login') }}" class="underline font-medium">{{ __('quiz.login_link') }}</a>
+                            {{ __('nav.login') }}
+                        </p>
+                    @endauth
+                </div>
+            @endif
+
             {{-- レビュー --}}
             <div class="bg-white shadow-sm rounded-lg p-6">
-                <h3 class="font-semibold text-lg text-gray-800 mb-4">レビュー（{{ $recipe->reviews->count() }}件）</h3>
+                <h3 class="font-semibold text-lg text-gray-800 mb-4">{{ __('reviews.count', ['count' => $recipe->reviews->count()]) }}</h3>
 
                 @if (session('success'))
                     <div class="mb-4 text-sm text-green-700 bg-green-100 rounded p-3">{{ session('success') }}</div>
@@ -137,16 +156,16 @@
                             </div>
                             @can('delete', $review)
                                 <form method="POST" action="{{ route('reviews.destroy', $review) }}"
-                                      onsubmit="return confirm('このレビューを削除しますか？')">
+                                      onsubmit="return confirm('{{ __('reviews.delete_confirm') }}')">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="text-xs text-red-500 hover:underline">削除</button>
+                                    <button type="submit" class="text-xs text-red-500 hover:underline">{{ __('common.delete') }}</button>
                                 </form>
                             @endcan
                         </div>
                         <p class="mt-1 text-sm text-gray-600">{{ $review->comment }}</p>
                     </div>
                 @empty
-                    <p class="text-sm text-gray-400">まだレビューはありません。</p>
+                    <p class="text-sm text-gray-400">{{ __('reviews.no_reviews') }}</p>
                 @endforelse
 
                 @auth
@@ -155,11 +174,11 @@
                     @endphp
                     @unless ($hasReviewed)
                         <div class="mt-6 pt-4 border-t border-gray-100">
-                            <h4 class="text-sm font-semibold text-gray-700 mb-3">レビューを投稿する</h4>
+                            <h4 class="text-sm font-semibold text-gray-700 mb-3">{{ __('reviews.post_title') }}</h4>
                             <form method="POST" action="{{ route('reviews.store', $recipe) }}">
                                 @csrf
                                 <div class="mb-3">
-                                    <label class="block text-sm text-gray-600 mb-1">評価</label>
+                                    <label class="block text-sm text-gray-600 mb-1">{{ __('reviews.rating') }}</label>
                                     <select name="rating" class="border border-gray-300 rounded px-3 py-1 text-sm">
                                         @for ($i = 5; $i >= 1; $i--)
                                             <option value="{{ $i }}" {{ old('rating') == $i ? 'selected' : '' }}>
@@ -172,17 +191,17 @@
                                     @enderror
                                 </div>
                                 <div class="mb-3">
-                                    <label class="block text-sm text-gray-600 mb-1">コメント</label>
+                                    <label class="block text-sm text-gray-600 mb-1">{{ __('reviews.comment') }}</label>
                                     <textarea name="comment" rows="3"
                                               class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-400"
-                                              placeholder="レシピの感想を書いてください">{{ old('comment') }}</textarea>
+                                              placeholder="{{ __('reviews.comment_placeholder') }}">{{ old('comment') }}</textarea>
                                     @error('comment')
                                         <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
                                     @enderror
                                 </div>
                                 <button type="submit"
                                         class="px-4 py-2 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700">
-                                    投稿する
+                                    {{ __('reviews.post_button') }}
                                 </button>
                             </form>
                         </div>
@@ -191,7 +210,7 @@
             </div>
 
             <div class="text-center">
-                <a href="{{ route('recipes.index') }}" class="text-sm text-indigo-600 hover:underline">← レシピ一覧に戻る</a>
+                <a href="{{ route('recipes.index') }}" class="text-sm text-indigo-600 hover:underline">{{ __('common.back_to_list') }}</a>
             </div>
 
         </div>

@@ -15,10 +15,10 @@ class StoreQuizRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'question'    => ['required', 'string'],
-            'choices'     => ['required', 'array', 'size:4'],
-            'choices.*'   => ['required', 'string'],
-            'answer'      => ['required', 'string', Rule::in($this->input('choices', []))],
+            'question' => ['required', 'string'],
+            'choices' => ['required', 'array', 'size:4'],
+            'choices.*' => ['required', 'string'],
+            'answer' => ['required', 'string', Rule::in($this->input('choices', []))],
         ];
     }
 }

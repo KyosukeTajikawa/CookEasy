@@ -13,13 +13,11 @@ class AdminMiddleware
      *
      * 未ログインまたは role が admin 以外の場合は 403 を返す。
      *
-     * @param Request $request
-     * @param Closure(Request): Response $next
-     * @return Response
+     * @param  Closure(Request): Response  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!$request->user()?->isAdmin()) {
+        if (! $request->user()?->isAdmin()) {
             abort(403);
         }
 

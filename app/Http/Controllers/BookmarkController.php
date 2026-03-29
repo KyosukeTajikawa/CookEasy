@@ -24,13 +24,13 @@ class BookmarkController extends Controller
     {
         Auth::user()->bookmarks()->firstOrCreate(['recipe_id' => $recipe->id]);
 
-        return back()->with('success', 'ブックマークに追加しました。');
+        return back()->with('success', __('bookmarks.added_success'));
     }
 
     public function destroy(Recipe $recipe): RedirectResponse
     {
         Auth::user()->bookmarks()->where('recipe_id', $recipe->id)->delete();
 
-        return back()->with('success', 'ブックマークを解除しました。');
+        return back()->with('success', __('bookmarks.removed_success'));
     }
 }

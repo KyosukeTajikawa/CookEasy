@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            レビュー管理
+            {{ __('admin.reviews_title') }}
         </h2>
     </x-slot>
 
@@ -16,11 +16,11 @@
                 <table class="w-full text-sm text-left text-gray-700">
                     <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
                         <tr>
-                            <th class="px-4 py-3">投稿者</th>
-                            <th class="px-4 py-3">レシピ</th>
-                            <th class="px-4 py-3">評価</th>
-                            <th class="px-4 py-3">コメント</th>
-                            <th class="px-4 py-3">投稿日</th>
+                            <th class="px-4 py-3">{{ __('admin.review_table_author') }}</th>
+                            <th class="px-4 py-3">{{ __('admin.review_table_recipe') }}</th>
+                            <th class="px-4 py-3">{{ __('admin.review_table_rating') }}</th>
+                            <th class="px-4 py-3">{{ __('admin.review_table_comment') }}</th>
+                            <th class="px-4 py-3">{{ __('admin.review_table_date') }}</th>
                             <th class="px-4 py-3"></th>
                         </tr>
                     </thead>
@@ -41,15 +41,15 @@
                                 <td class="px-4 py-3 text-gray-400">{{ $review->created_at->format('Y/m/d') }}</td>
                                 <td class="px-4 py-3">
                                     <form method="POST" action="{{ route('admin.reviews.destroy', $review) }}"
-                                          onsubmit="return confirm('このレビューを削除しますか？')">
+                                          onsubmit="return confirm('{{ __('admin.review_delete_confirm') }}')">
                                         @csrf @method('DELETE')
-                                        <button type="submit" class="text-xs text-red-500 hover:underline">削除</button>
+                                        <button type="submit" class="text-xs text-red-500 hover:underline">{{ __('admin.delete_button') }}</button>
                                     </form>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-4 py-6 text-center text-gray-400">レビューはありません。</td>
+                                <td colspan="6" class="px-4 py-6 text-center text-gray-400">{{ __('admin.no_reviews') }}</td>
                             </tr>
                         @endforelse
                     </tbody>

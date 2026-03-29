@@ -70,7 +70,7 @@ class Recipe extends Model
     /**
      * 公開済みレシピのみに絞り込むスコープ
      *
-     * @param Builder<Recipe> $query
+     * @param  Builder<Recipe>  $query
      * @return Builder<Recipe>
      */
     public function scopePublished(Builder $query): Builder
@@ -91,7 +91,7 @@ class Recipe extends Model
     public function scopeFilterByIngredient(Builder $query, ?string $keyword): Builder
     {
         return $keyword
-            ? $query->whereHas('ingredients', fn ($q) => $q->where('name', 'LIKE', '%' . $keyword . '%'))
+            ? $query->whereHas('ingredients', fn ($q) => $q->where('name', 'LIKE', '%'.$keyword.'%'))
             : $query;
     }
 

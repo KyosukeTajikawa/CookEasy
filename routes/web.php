@@ -12,8 +12,18 @@ use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Route;
 
+// 言語切り替え
+Route::get('/language/{locale}', function (string $locale) {
+    if (in_array($locale, ['ja', 'en'])) {
+        session(['locale' => $locale]);
+    }
+
+    return redirect()->back();
+})->name('language.switch');
+
 // ゲスト（認証不要・固定パス）
-Route::get('/recipes', [RecipeController::class, 'index'])->name('recipes.index');
+Route::get('/', [RecipeController::class, 'index'])->name('recipes.index');
+Route::get('/recipes', [RecipeController::class, 'index']);
 
 // ログインユーザー向けルート
 Route::middleware('auth')->group(function () {

@@ -8,8 +8,6 @@ class AppServiceProvider extends ServiceProvider
 {
     /**
      * アプリケーションサービスを登録する
-     *
-     * @return void
      */
     public function register(): void
     {
@@ -18,8 +16,6 @@ class AppServiceProvider extends ServiceProvider
 
     /**
      * アプリケーションサービスをブートストラップする
-     *
-     * @return void
      */
     public function boot(): void
     {

@@ -20,6 +20,6 @@ class ReviewController extends Controller
     {
         $review->delete();
 
-        return back()->with('success', 'レビューを削除しました。');
+        return back()->with('success', __('admin.review_deleted_success'));
     }
 }
