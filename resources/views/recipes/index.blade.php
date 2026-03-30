@@ -93,7 +93,7 @@
                                 @endif
                                 <div class="mt-2 flex items-center gap-3 text-sm text-gray-500">
                                     <span>⏱ {{ $recipe->cook_time }}{{ __('recipes.cook_time_minutes') }}</span>
-                                    <span>{{ $recipe->difficulty }}</span>
+                                    <span>{{ $recipe->difficultyLabel() }}</span>
                                 </div>
                                 <p class="mt-1 text-xs text-gray-400">{{ $recipe->user->name }}</p>
                             </div>

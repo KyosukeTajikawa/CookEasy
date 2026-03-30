@@ -164,4 +164,14 @@ class Recipe extends Model
     {
         return $this->hasOne(Quiz::class);
     }
+
+    public function difficultyLabel(): string
+    {
+        return match ($this->difficulty) {
+            '超簡単' => __('recipes.difficulty_very_easy'),
+            '簡単' => __('recipes.difficulty_easy'),
+            '普通' => __('recipes.difficulty_normal'),
+            default => $this->difficulty,
+        };
+    }
 }

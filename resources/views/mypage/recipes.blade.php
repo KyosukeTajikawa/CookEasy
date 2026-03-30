@@ -44,7 +44,7 @@
                                     <span class="text-xs text-gray-400">{{ $recipe->created_at->format('Y/m/d') }}</span>
                                 </div>
                                 <p class="font-medium text-gray-800 truncate">{{ $recipe->title }}</p>
-                                <p class="text-xs text-gray-500 mt-0.5">⏱ {{ $recipe->cook_time }}{{ __('recipes.cook_time_minutes') }} / {{ $recipe->difficulty }}</p>
+                                <p class="text-xs text-gray-500 mt-0.5">⏱ {{ $recipe->cook_time }}{{ __('recipes.cook_time_minutes') }} / {{ $recipe->difficultyLabel() }}</p>
                             </div>
 
                             <div class="flex gap-2 flex-shrink-0">

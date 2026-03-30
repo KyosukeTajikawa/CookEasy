@@ -71,7 +71,7 @@
             <div class="bg-white shadow-sm rounded-lg p-6">
                 <div class="flex gap-6 text-sm text-gray-600 mb-4">
                     <span>⏱ {{ $recipe->cook_time }}{{ __('recipes.cook_time_minutes') }}</span>
-                    <span>{{ $recipe->difficulty }}</span>
+                    <span>{{ $recipe->difficultyLabel() }}</span>
                     <span>{{ __('recipes.posted_by') }}{{ $recipe->user->name }}</span>
                 </div>
                 <p class="text-gray-700 whitespace-pre-wrap">{{ $recipe->description }}</p>
